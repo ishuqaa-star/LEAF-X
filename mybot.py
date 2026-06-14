@@ -1,5 +1,5 @@
 import streamlit as st
-import ollama
+from openai import OpenAI
 
 st.set_page_config(
     page_title="LEAF X - Your Plant Classification Assistant",
@@ -13,8 +13,10 @@ st.subheader("Classify plants and learn their characteristics")
 plant_name = st.text_input("Enter Plant Name")
 
 def classify_plant(plant):
-    response = ollama.chat(
-        model="mistral",
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+    
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
         messages=[
             {
                 "role": "system",
@@ -66,7 +68,7 @@ Use simple language suitable for school students.
         ]
     )
 
-    return response["message"]["content"]
+    return response.choices[0].message.content
 
 if st.button("Classify Plant"):
 
